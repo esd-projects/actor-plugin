@@ -48,6 +48,11 @@ abstract class Actor
         });
     }
 
+    /**
+     * constructor后附带传递的数据
+     * @param $data
+     * @return mixed
+     */
     abstract public function initData($data);
 
     protected function handle(ActorEvent $actorEvent)
