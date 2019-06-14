@@ -45,12 +45,16 @@ class TestPort extends ServerPort
     public function onHttpRequest(Request $request, Response $response)
     {
         $actor1 = TestActor::create("actor1");
-        $actor2 = TestActor::create("actor2");
         $actor1->sendMessage(new ActorMessage("message"));
         $actor1->sendMessage(new ActorMessage("message"));
         $actor1->sendMessage(new ActorMessage("message"));
         $actor1->sendMessage(new ActorMessage("message"));
-        echo $actor2->getName();
+        goWithContext(function ()use ($actor1){
+            var_dump($actor1->test());
+        });
+        goWithContext(function ()use ($actor1){
+            var_dump($actor1->test());
+        });
     }
 
     public function onWsMessage(WebSocketFrame $frame)

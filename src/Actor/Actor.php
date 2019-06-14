@@ -140,4 +140,10 @@ abstract class Actor
     {
         $this->channel->push($message);
     }
+
+    //这个是提供给代理使用的
+    public function startTransaction(callable $call)
+    {
+
+    }
 }

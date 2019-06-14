@@ -12,17 +12,11 @@ namespace ESD\Plugins\Actor\ExampleClass;
 use ESD\Plugins\Actor\Actor;
 use ESD\Plugins\Actor\ActorMessage;
 
-class TestActor extends Actor
+class ChildActor extends Actor
 {
-
-    /**
-     * @var ChildActor
-     */
-    private $child;
-
     public function initData($data)
     {
-        $this->child = ChildActor::create("child");
+
     }
 
     /**
@@ -38,10 +32,11 @@ class TestActor extends Actor
 
     public function test()
     {
-        $this->child->startTransaction(function (){
-            var_dump($this->child->test());
-            var_dump($this->child->test2());
-        });
-        return "ok";
+        return 1;
+    }
+
+    public function test2()
+    {
+        return 2;
     }
 }
