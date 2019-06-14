@@ -9,6 +9,8 @@
 namespace ESD\Plugins\Actor;
 
 
+use ESD\Core\Server\Server;
+use ESD\Plugins\ProcessRPC\ProcessRPCCallMessage;
 use ESD\Plugins\ProcessRPC\RPCProxy;
 
 class ActorRPCProxy extends RPCProxy
@@ -27,5 +29,15 @@ class ActorRPCProxy extends RPCProxy
             throw new ActorException("actor:$actorName not exist");
         }
         parent::__construct($actorInfo->getProcess(), $actorInfo->getClassName() . ":" . $actorInfo->getName(), $oneway, $timeOut);
+    }
+
+    /**
+     * 发给Actor一个消息
+     * @param $message
+     */
+    public function sendMessage(ActorMessage $message)
+    {
+        $message = new ProcessRPCCallMessage($this->className, "sendMessage", [$message], true);
+        Server::$instance->getProcessManager()->getCurrentProcess()->sendMessage($message, $this->process);
     }
 }

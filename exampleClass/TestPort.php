@@ -13,6 +13,7 @@ use ESD\Core\Server\Beans\Request;
 use ESD\Core\Server\Beans\Response;
 use ESD\Core\Server\Beans\WebSocketFrame;
 use ESD\Core\Server\Port\ServerPort;
+use ESD\Plugins\Actor\ActorMessage;
 
 class TestPort extends ServerPort
 {
@@ -43,8 +44,12 @@ class TestPort extends ServerPort
 
     public function onHttpRequest(Request $request, Response $response)
     {
-        $actor1 = TestActor::create("1");
-        $actor2 = TestActor::create("2");
+        $actor1 = TestActor::create("actor1");
+        $actor2 = TestActor::create("actor2");
+        $actor1->sendMessage(new ActorMessage("message"));
+        $actor1->sendMessage(new ActorMessage("message"));
+        $actor1->sendMessage(new ActorMessage("message"));
+        $actor1->sendMessage(new ActorMessage("message"));
         echo $actor2->getName();
     }
 

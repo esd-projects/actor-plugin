@@ -9,6 +9,7 @@
 namespace ESD\Plugins\Actor;
 
 use DI\Annotation\Inject;
+use ESD\Core\Channel\Channel;
 use ESD\Core\Plugins\Event\EventDispatcher;
 use ESD\Core\Server\Server;
 
@@ -20,10 +21,19 @@ use ESD\Core\Server\Server;
 abstract class Actor
 {
     /**
+     * @var Channel
+     */
+    protected $channel;
+    /**
      * @Inject()
      * @var EventDispatcher
      */
     protected $eventDispatcher;
+    /**
+     * @Inject()
+     * @var ActorConfig
+     */
+    protected $actorConfig;
     /**
      * @var string
      */
@@ -41,10 +51,14 @@ abstract class Actor
         $this->name = $name;
         Server::$instance->getContainer()->injectOn($this);
         ActorManager::getInstance()->addActor($this);
-        //监听
-        $call = $this->eventDispatcher->listen(ActorEvent::ALL_COMMAND);
-        $call->call(function (ActorEvent $actorEvent) {
-            $this->handle($actorEvent);
+
+        $this->channel = DIGet(Channel::class, [$this->actorConfig->getActorMailboxCapacity()]);
+        //循环处理邮箱内的信息
+        goWithContext(function () {
+            while (true) {
+                $message = $this->channel->pop();
+                $this->handleMessage($message);
+            }
         });
     }
 
@@ -55,10 +69,12 @@ abstract class Actor
      */
     abstract public function initData($data);
 
-    protected function handle(ActorEvent $actorEvent)
-    {
-
-    }
+    /**
+     * 处理接收到的消息
+     * @param $message
+     * @return mixed
+     */
+    abstract protected function handleMessage(ActorMessage $message);
 
     /**
      * @return string
@@ -117,5 +133,11 @@ abstract class Actor
             }
         }
         return new ActorRPCProxy($actorName, false, $timeOut);
+    }
+
+    //这个是提供给代理使用的,这里会接受到一个消息,扔到邮箱中去
+    public function sendMessage(ActorMessage $message)
+    {
+        $this->channel->push($message);
     }
 }

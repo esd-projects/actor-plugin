@@ -30,6 +30,12 @@ class ActorConfig extends BaseConfig
      */
     protected $actorWorkerCount = 1;
 
+    /**
+     * actor邮箱的容量
+     * @var int
+     */
+    protected $actorMailboxCapacity = 100;
+
     public function __construct()
     {
         parent::__construct(self::key);
@@ -82,5 +88,21 @@ class ActorConfig extends BaseConfig
     public function setActorWorkerCount(int $actorWorkerCount): void
     {
         $this->actorWorkerCount = $actorWorkerCount;
+    }
+
+    /**
+     * @return int
+     */
+    public function getActorMailboxCapacity(): int
+    {
+        return $this->actorMailboxCapacity;
+    }
+
+    /**
+     * @param int $actorMailboxCapacity
+     */
+    public function setActorMailboxCapacity(int $actorMailboxCapacity): void
+    {
+        $this->actorMailboxCapacity = $actorMailboxCapacity;
     }
 }
